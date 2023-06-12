@@ -1,28 +1,18 @@
+import 'react-native-gesture-handler';
 import React, {useEffect} from 'react';
-import RootNavigation from './src/navigation/index';
-import {Provider} from 'react-redux';
-import {persistStore} from 'redux-persist';
-import {PersistGate} from 'redux-persist/integration/react';
-import reduxStore from './src/redux';
-import EStyleSheet from 'react-native-extended-stylesheet';
-
-export const reduxPersistStore = persistStore(reduxStore);
-
+import SplashScreen from 'react-native-splash-screen';
+import { Provider } from 'react-native-paper'
+import { theme } from './src/core/theme'
+import Providers from './navigation';
 
 const App = () => {
-
-  useEffect(() => {
-    EStyleSheet.build();
-  }, []);
-
-
+  useEffect(()=> {
+    SplashScreen.hide()
+  }, [])
   return (
-    <Provider store={reduxStore}>
-      <PersistGate persistor={reduxPersistStore}>
-        <RootNavigation />
-      </PersistGate>
+    <Provider theme={theme}>
+   <Providers/>
     </Provider>
   )
 }
-
 export default App;
