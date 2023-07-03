@@ -1,59 +1,82 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   StyleSheet,
   ActivityIndicator,
   View,
   Text,
-  ScrollView,
   Dimensions,
   ToastAndroid,
   FlatList,
+  StatusBar,
+  ScrollView
 } from 'react-native';
 import MainItems from '../components/MainItems';
 import * as Animatable from 'react-native-animatable';
-import Header from '../components/Header';
 const screenHeight = Dimensions.get('screen').height;
 import Button from '../components/Button'
-
-import {AuthContext} from '../../navigation/AuthProvider';
+import { AuthContext } from '../../navigation/AuthProvider';
 import { theme } from '../core/theme';
-
-const allowedServices = [1,3];
+import Usercard from '../components/usercard'
+const allowedServices = [1, 2, 3, 4, 5, 6, 7,8,9];
 const Services = [
   {
     id: 1,
     title: 'Court Cases',
-    imageName: require('../assets/frame.png'),
+    imageName: require('../assets/cases.png'),
     navigateTo: 'Industrial Units',
   },
   {
     id: 2,
-    title: 'SIE',
-    imageName: require('../assets/consumer.png'),
+    title: 'Dashboard',
+    imageName: require('../assets/dashboard.png'),
     navigateTo: 'Consumer Screen',
   },
   {
     id: 3,
-    title: 'Our Team',
-    imageName: require('../assets/team.png'),
+    title: 'Reports',
+    imageName: require('../assets/report.png'),
     navigateTo: 'OurTeam',
   },
   {
     id: 4,
-    title: 'Ghee & Sugar Rates',
-    imageName: require('../assets/stats.png'),
+    title: 'Calendar',
+    imageName: require('../assets/calendar.png'),
     navigateTo: 'ghee&sugar',
   },
   {
     id: 5,
-    title: 'Industrial 2',
-    imageName: require('../assets/Boiler.png'),
+    title: 'Comments',
+    imageName: require('../assets/comment.png'),
+    navigateTo: undefined,
+  },
+  {
+    id: 6,
+    title: 'All Cases',
+    imageName: require('../assets/current.png'),
+    navigateTo: undefined,
+  },
+  {
+    id: 7,
+    title: 'Calendar',
+    imageName: require('../assets/calendar.png'),
+    navigateTo: 'ghee&sugar',
+  },
+  {
+    id: 8,
+    title: 'Comments',
+    imageName: require('../assets/comment.png'),
+    navigateTo: undefined,
+  },
+  {
+    id: 9,
+    title: 'All Cases',
+    imageName: require('../assets/current.png'),
     navigateTo: undefined,
   },
 ];
 
-const MainScreen = ({navigation}) => {
-  const {logout, isLoading} = useContext(AuthContext);
+const MainScreen = ({ navigation }) => {
+  const { logout, isLoading } = useContext(AuthContext);
   const [listData, setListData] = useState([]);
 
   useEffect(() => {
@@ -76,7 +99,12 @@ const MainScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-       <View style={styles.header}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={'transparent'}
+        translucent
+      />
+      <View style={styles.header}>
         <Text style={styles.text_header}>Home</Text>
       </View>
       <Animatable.View
@@ -88,15 +116,20 @@ const MainScreen = ({navigation}) => {
             width: '100%',
           },
         ]}>
-          <Header>Choose your module</Header>
-          <Text>Select Industrial Unit for adding/updating industries.</Text>
-        <View style={{marginLeft: 25, marginTop:30}}>
+        <View style={{ alignItems: 'center' }}>
+          <View>
+         <Usercard/>
+          </View>
+        </View>
+        <ScrollView>
+        <View style={{ marginLeft: 10, marginTop: 30 }}>
           <FlatList
-            ItemSeparatorComponent={() => <View style={{height: 20}} />}
+            ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
             data={listData}
-            numColumns={1}
+            numColumns={3}
             keyExtractor={item => `item-${item.id}`}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
+
               <MainItems
                 title={item.title}
                 imageName={item.imageName}
@@ -112,12 +145,13 @@ const MainScreen = ({navigation}) => {
         {isLoading ? (
           <ActivityIndicator color={'#2cce63'} animating={true} size="large" />
         ) : (
-   
-        <View style={{alignItems:'center', marginTop:30}}>
-            <Button mode="contained" type="submit"  onPress={() => logout()} 
-                isLoading={isLoading} title='Logout'/>
-              </View>
+
+          <View style={{ alignItems: 'center', marginTop: 30 }}>
+            <Button mode="contained" type="submit" onPress={() => logout()}
+              isLoading={isLoading} title='Logout' />
+          </View>
         )}
+        </ScrollView>
       </Animatable.View>
     </View>
   );
@@ -143,11 +177,11 @@ const styles = StyleSheet.create({
   },
   header: {
     flex: 1,
-    alignItems:'center'
+    alignItems: 'center'
   },
   footer: {
     flex: 3,
-    backgroundColor: '#fff',
+    backgroundColor: '#FAFAFA',
     paddingHorizontal: 20,
     paddingVertical: 30,
     marginTop: -100,
@@ -156,26 +190,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
-    marginTop:30
+    marginTop: 30
   },
-  row: {
-    flexDirection: 'row',
-    marginTop: 4,
+  cardcontainer: {
+    height: 120,
+    width: 350,
+    backgroundColor: theme.colors.bgColor,
+    borderRadius: 15,
+    elevation: 5,
   },
-  userBtnTxt: {
-    color: '#2e64e5',
-  },
-  fab: {
-    position:'absolute',
-    right: 30,
-    bottom: 30,
-  },
-  fabText:{
-    position:'absolute',
-    right: 30,
-    bottom: 90,
-    color:'#ff3b44',
-    fontWeight:"bold",
-
-  }
 });
