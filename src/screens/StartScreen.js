@@ -1,11 +1,8 @@
 import React from 'react'
-import { Text, View, StyleSheet, StatusBar } from 'react-native'
-import Logo from '../components/Logo'
+import { Text, View, StyleSheet, StatusBar, Image } from 'react-native'
 import Background from '../components/Background'
-import { theme } from '../core/theme'
 import * as Animatable from 'react-native-animatable';
 import ImauLogo from '../assets/svgs/ImauLogo'
-import LawLogo from '../assets/svgs/Lawlogo'
 
 
 export default function StartScreen({ navigation }) {
@@ -25,7 +22,10 @@ export default function StartScreen({ navigation }) {
             style={styles.header}
         >
         <View style={{marginTop:-200}}>
-          <LawLogo/>
+        <Image
+        style={styles.image}
+        source={require('../assets/lawsign.png')}
+      />
         </View>
         <View style={styles.heading}>
         <Text style={styles.text_header1}>We welcome you to</Text>
@@ -96,5 +96,11 @@ const styles = StyleSheet.create({
   text_header2: {
     fontSize: 15,
     color: '#fff',
+  },
+  image: {
+    marginTop:16,
+    marginLeft:15,
+    width: 160,
+    height: 180,
   },
 });
