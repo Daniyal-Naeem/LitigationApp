@@ -10,7 +10,7 @@ import { AuthContext } from '../../navigation/AuthProvider'
 import * as Animatable from 'react-native-animatable'
 import Header from '../components/Header'
 import TextInputs from '../components/Input';
-import ForgotLogo from '../assets/svgs/ForgotLogo'
+import Forgot from '../assets/svgs/forgot'
 
 const screenHeight = Dimensions.get('screen').height;
 export default function LoginScreen({ navigation }) {
@@ -32,7 +32,7 @@ export default function LoginScreen({ navigation }) {
         }]}
       >
         <View style={{marginTop:-200,alignItems:'center'}}>
-        <ForgotLogo
+        <Forgot
          width="80%"
          height="60%"
         />
