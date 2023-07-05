@@ -27,5 +27,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderRadius: 8,
     elevation: 5,
+    position:'absolute'
   },
 });
