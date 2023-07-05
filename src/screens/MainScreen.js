@@ -16,14 +16,22 @@ const screenHeight = Dimensions.get('screen').height;
 import Button from '../components/Button'
 import { AuthContext } from '../../navigation/AuthProvider';
 import { theme } from '../core/theme';
-import Usercard from '../components/usercard'
-const allowedServices = [1, 2, 3, 4, 5, 6, 7,8,9];
+const showToastWithGravityAndOffset = () => {
+  ToastAndroid.showWithGravityAndOffset(
+    'Under Development!',
+    ToastAndroid.LONG,
+    ToastAndroid.BOTTOM,
+    25,
+    50,
+  );
+};
+const allowedServices = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const Services = [
   {
     id: 1,
     title: 'Court Cases',
     imageName: require('../assets/cases.png'),
-    navigateTo: 'Industrial Units',
+    navigateTo: 'Court Cases',
   },
   {
     id: 2,
@@ -41,42 +49,48 @@ const Services = [
     id: 4,
     title: 'Calendar',
     imageName: require('../assets/calendar.png'),
-    navigateTo: 'ghee&sugar',
+    // navigateTo: 'ghee&sugar',
+    onPress: () => (showToastWithGravityAndOffset),
   },
   {
     id: 5,
     title: 'Comments',
     imageName: require('../assets/comment.png'),
-    navigateTo: undefined,
+    // navigateTo: undefined,
+    onPress: () => (showToastWithGravityAndOffset),
   },
   {
     id: 6,
     title: 'All Cases',
     imageName: require('../assets/current.png'),
-    navigateTo: undefined,
+    // navigateTo: undefined,
+    onPress: () => (showToastWithGravityAndOffset),
   },
   {
     id: 7,
     title: 'Calendar',
     imageName: require('../assets/calendar.png'),
-    navigateTo: 'ghee&sugar',
+    // navigateTo: 'ghee&sugar',
+    onPress: () => (showToastWithGravityAndOffset),
   },
   {
     id: 8,
     title: 'Comments',
     imageName: require('../assets/comment.png'),
-    navigateTo: undefined,
+    // navigateTo: undefined,
+    onPress: () => (showToastWithGravityAndOffset),
   },
   {
     id: 9,
     title: 'All Cases',
     imageName: require('../assets/current.png'),
-    navigateTo: undefined,
+    // navigateTo: undefined,
+    onPress: () => (showToastWithGravityAndOffset),
   },
 ];
 
 const MainScreen = ({ navigation }) => {
-  const { logout, isLoading } = useContext(AuthContext);
+  const { logout, isLoading, userInfo } = useContext(AuthContext);
   const [listData, setListData] = useState([]);
 
   useEffect(() => {
@@ -116,41 +130,44 @@ const MainScreen = ({ navigation }) => {
             width: '100%',
           },
         ]}>
-        <View style={{ alignItems: 'center' }}>
-          <View>
-         <Usercard/>
-          </View>
+
+        <View style={styles.headerCard}>
+          <Text style={styles.text_header}>Wellcome Back</Text>
+          <Text style={styles.welcome}>"{userInfo?.data?.user?.title}" </Text>
+        </View>
+        <View>
+
         </View>
         <ScrollView>
-        <View style={{ marginLeft: 10, marginTop: 30 }}>
-          <FlatList
-            ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
-            data={listData}
-            numColumns={3}
-            keyExtractor={item => `item-${item.id}`}
-            renderItem={({ item }) => (
+          <View style={{ marginLeft: 10, marginTop: 30 }}>
+            <FlatList
+              ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
+              data={listData}
+              numColumns={3}
+              keyExtractor={item => `item-${item.id}`}
+              renderItem={({ item }) => (
 
-              <MainItems
-                title={item.title}
-                imageName={item.imageName}
-                navigateTo={() =>
-                  item.navigateTo
-                    ? navigation.navigate(item.navigateTo)
-                    : showToastWithGravityAndOffset()
-                }
-              />
-            )}
-          />
-        </View>
-        {isLoading ? (
-          <ActivityIndicator color={'#2cce63'} animating={true} size="large" />
-        ) : (
-
-          <View style={{ alignItems: 'center', marginTop: 30 }}>
-            <Button mode="contained" type="submit" onPress={() => logout()}
-              isLoading={isLoading} title='Logout' />
+                <MainItems
+                  title={item.title}
+                  imageName={item.imageName}
+                  navigateTo={() =>
+                    item.navigateTo
+                      ? navigation.navigate(item.navigateTo)
+                      : showToastWithGravityAndOffset()
+                  }
+                />
+              )}
+            />
           </View>
-        )}
+          {isLoading ? (
+            <ActivityIndicator color={'#2cce63'} animating={true} size="large" />
+          ) : (
+
+            <View style={{ alignItems: 'center', marginTop: 30 }}>
+              <Button mode="contained" type="submit" onPress={() => logout()}
+                isLoading={isLoading} title='Logout' />
+            </View>
+          )}
         </ScrollView>
       </Animatable.View>
     </View>
@@ -160,13 +177,21 @@ const MainScreen = ({ navigation }) => {
 export default MainScreen;
 
 const styles = StyleSheet.create({
+  headerCard: {
+    alignItems: 'center', 
+    borderRadius: 10,
+    borderWidth: 1,
+    backgroundColor: theme.colors.bgColor,
+    elevation: 5,
+
+  },
   headerText: {
     fontWeight: 'bold',
     fontSize: 25,
   },
   welcome: {
-    fontSize: 18,
-    marginBottom: 8,
+    fontSize: 20,
+    margin: 10,
     color: '#fff',
   },
   container: {
