@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,25 +6,18 @@ import {
   SafeAreaView,
   FlatList,
   ToastAndroid,
-  Image,RefreshControl, ScrollView, 
+  Image, RefreshControl, ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Text, FAB, Portal} from 'react-native-paper';
+import { Text, FAB, Portal } from 'react-native-paper';
 import BackButton from '../components/BackButton';
 import * as Animatable from 'react-native-animatable';
-import {BASE_URL} from '../config';
+import { BASE_URL } from '../config';
 import axios from 'axios';
-import {AuthContext} from '../../navigation/AuthProvider';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import Header from '../components/Header';
-const screenHeight = Dimensions.get('screen').height;
+import { AuthContext } from '../../navigation/AuthProvider';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useIsFocused } from "@react-navigation/native";
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { theme } from '../core/theme'
-import LocLogo from '../assets/svgs/withloc';
-import NoLocLogo from '../assets/svgs/noloc';
-import Dataprovided from '../assets/svgs/dataprovided';
-import Datanotprovided from '../assets/svgs/notprovided';
 
 const marginBottomItem = 20;
 const paddingItem = 10;
@@ -36,38 +29,32 @@ const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
-const CourtCases = ({navigation}) => {
+const CourtCases = ({ navigation }) => {
   const isFocused = useIsFocused();
-  const {userInfo} = useContext(AuthContext);
+  const { userInfo } = useContext(AuthContext);
   const [industry, setIndustry] = useState({});
-  const [state, setState] = React.useState({open: false});
-  const onStateChange = ({open}) => setState({open});
-  const {open} = state;
+  const [state, setState] = React.useState({ open: false });
+  const onStateChange = ({ open }) => setState({ open });
+  const { open } = state;
 
   useEffect(() => {
 
-    AsyncStorage.getItem('userInfos').then(userInfos =>{
-      console.log('userInfos', userInfos);
-      if(userInfos?.trim() != ''){
+    AsyncStorage.getItem('userInfos').then(userInfos => {
+      if (userInfos?.trim() != '') {
         setIndustry(JSON.parse(userInfos))
       }
     }).catch()
-   
-    isFocused &&  axios
-      .get(`${BASE_URL}/industrial-units/industries/dashboard`, {
+
+    isFocused && axios
+      .get(`${BASE_URL}/litigation/`, {
         headers: {
           Authorization: `Bearer ${userInfo.data.token.token}`,
         },
       })
       .then(res => {
         let userInfos = res.data.data;
-        console.log(
-          'userInfo',
-          userInfos.periodics?.forEach(year => {
-            console.log(year);
-          }),
-          );
-          setIndustry(userInfos);
+        console.log("lit",userInfos);
+        setIndustry(userInfos);
         AsyncStorage.setItem('userInfos', JSON.stringify(userInfos));
       })
       .catch(e => {
@@ -85,77 +72,6 @@ const CourtCases = ({navigation}) => {
     );
   };
 
-  const yearItem = ({item}) => (
-    <View style={{alignItems:'center'}}>
-      <Text style={{fontSize:15, fontWeight:'bold', padding:10}}>Periodic Data for the Year:{item.year}</Text>
-      <View
-        style={{
-          height: 150,
-          flexDirection: 'row',
-        }}>
-        <View style={styles.card4}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Data provided', {year:item.year})}>
-            <View style={{flexDirection: 'row'}}>
-              <View style={{marginLeft: 10}}>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: 25,
-                    marginTop: 15,
-                  }}>
-                  {item.periodics_available}
-                </Text>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: 15,
-                    marginTop: 5,
-                  }}>
-                  Complete{'\n'}Data Provided
-                </Text>
-              </View>
-              <View style={{ marginLeft:5,marginTop: 15}}>
-             <Dataprovided/>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.card5}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Data Notprovided', {year:item.year})}>
-            <View style={{flexDirection: 'row'}}>
-              <View style={{marginLeft: 10}}>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: 25,
-                    marginTop: 15,
-                  }}>
-                  {item.periodics_not_available}
-                </Text>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: 15,
-                    marginTop: 5,
-                  }}>
-                  Periodic Data{'\n'}Not Provided
-                </Text>
-              </View>
-              <View style={{marginRight: 100, marginTop: 15,}}>
-              <Datanotprovided/>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -165,177 +81,241 @@ const CourtCases = ({navigation}) => {
 
   return (
     <SafeAreaView>
-    <ScrollView
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
-      }
-    >
-   <View style={styles.container}>
-      <View style={styles.header}>
-        <BackButton goBack={navigation.goBack} />
-        <Text style={styles.text_header}>All Court Cases</Text>
-      </View>
-      <Animatable.View
-        animation="fadeInUpBig"
-        style={[
-          styles.footer,
-          {
-            backgroundColor: '#fff',
-          },
-        ]}>
-        <SafeAreaView style={{flex: 1}}>
-          <Portal>
-
-            <FAB.Group
-             style={[styles.fab]}
-              open={open}
-              icon={open ? 'calendar-today' : 'plus'}
-              colors = {'#257A52'}
-              actions={[
-                {
-                  icon: 'reply',
-                  label: 'Go Back',
-                  onPress: () => navigation.goBack(),
-                },
-                {
-                  icon: 'book',
-                  label: 'Change Password',
-                  onPress: () => navigation.navigate('Change Password'),
-                },
-                {
-                  icon: 'star',
-                  label: 'Add New Industrial Unit',
-                  onPress: () => navigation.navigate('IndustrialUnits Form'),
-                  small: false,
-                },
-                {
-                  icon: 'plus',
-                  label: 'Add Industrial Estate Info',
-                  onPress: () => navigation.navigate('EstateDetail'),
-                  small: false,
-                },
-              ]}
-              onStateChange={onStateChange}
-              onPress={() => {
-                if (open) {
-                  // do something if the speed dial is open
-                }
-              }}
-            />
-          </Portal>
-          <View style={{alignItems: 'center'}}>
-            <Header>"{userInfo?.data?.user?.title}" </Header>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <BackButton goBack={navigation.goBack} />
+            <Text style={styles.text_header}>All Court Cases</Text>
           </View>
-          <TouchableOpacity
-            style={styles.card1}
-            onPress={() => navigation.navigate('Industries List')}>
-            <View style={{marginLeft: 20, flexDirection: 'row'}}>
-              <View>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: 35,
-                    marginTop: 15,
-                  }}>
-                  {industry?.total}
-                </Text>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: 20,
-                    marginTop: 10,
-                  }}>
-                  Total Industrial Profiles
-                </Text>
-              </View>
-              <View style={{marginLeft: 10,}}>
-                <Image
-                  style={{width: 100, height: 100}}
-                  source={require('../assets/indd.png')}
+          <Animatable.View
+            animation="fadeInUpBig"
+            style={[
+              styles.footer,
+              {
+                backgroundColor: '#fff',
+              },
+            ]}>
+            <SafeAreaView style={{ flex: 1 }}>
+              <Portal>
+
+                <FAB.Group
+                  style={[styles.fab]}
+                  open={open}
+                  icon={open ? 'calendar-today' : 'plus'}
+                  colors={'#257A52'}
+                  actions={[
+                    {
+                      icon: 'reply',
+                      label: 'Go Back',
+                      onPress: () => navigation.goBack(),
+                    },
+                    {
+                      icon: 'star',
+                      label: 'Add New Court Case',
+                      onPress: () => navigation.navigate('IndustrialUnits Form'),
+                      small: false,
+                    },
+                  ]}
+                  onStateChange={onStateChange}
+                  onPress={() => {
+                    if (open) {
+                      // do something if the speed dial is open
+                    }
+                  }}
                 />
+              </Portal>
+              <TouchableOpacity
+                style={styles.card1}
+                onPress={() => navigation.navigate('Cases List')}>
+                <View style={{ alignItems: 'center' }}>
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontWeight: 'bold',
+                      fontSize: 20,
+                      marginTop: 10,
+                    }}>
+                    Total Court Cases
+                  </Text>
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontWeight: 'bold',
+                      fontSize: 25,
+                      marginTop: 10,
+                    }}>
+                    {industry?.total_cases}
+                  </Text>
+                </View>
+
+              </TouchableOpacity>
+              <View
+                style={{
+                  height: 150,
+                  flexDirection: 'row',
+                  marginTop: 20
+                }}>
+                <View style={styles.card2}>
+                  <TouchableOpacity
+                  //</View> onPress={() => navigation.navigate('Data provided', {year:item.year})}
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 20,
+                          marginTop: 10,
+                        }}>
+                        COC
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 25,
+                          marginTop: 10,
+                        }}>
+                        {industry?.coc}
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 15,
+                          marginTop: 8,
+                        }}>
+                        Contempt of Court
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.card3}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('DataNotLoc')}
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 20,
+                          marginTop: 10,
+                        }}>
+                        SOC
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 25,
+                          marginTop: 10,
+                        }}>
+                        {industry?.stay_order}
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 15,
+                          marginTop: 8,
+                        }}>
+                        Stay Order
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-          <View
-        style={{
-          height: 150,
-          flexDirection: 'row',
-          marginTop:20
-        }}>
-        <View style={styles.card2}>
-          <TouchableOpacity
-           //</View> onPress={() => navigation.navigate('Data provided', {year:item.year})}
-           >
-            <View style={{flexDirection: 'row'}}>
-              <View style={{marginLeft: 10}}>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: 25,
-                    marginTop: 10,
-                  }}>
-                 {industry?.global_address_available}
-                </Text>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: 15,
-                    marginTop: 10,
-                  }}>
-                  Location{'\n'}Data Provided
-                </Text>
+              <View
+                style={{
+                  height: 150,
+                  flexDirection: 'row',
+                  marginTop: 20
+                }}>
+                <View style={styles.card2}>
+                  <TouchableOpacity
+                  //</View> onPress={() => navigation.navigate('Data provided', {year:item.year})}
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 20,
+                          marginTop: 10,
+                        }}>
+                        CPLA
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 25,
+                          marginTop: 10,
+                        }}>
+                        {industry?.cpla}
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 15,
+                          marginTop: 8,
+                        }}>
+                        Civil Petition
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.card3}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('DataNotLoc')}
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 20,
+                          marginTop: 10,
+                        }}>
+                        OTHER Cases
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 25,
+                          marginTop: 10,
+                        }}>
+                        {industry?.other}
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: 15,
+                          marginTop: 8,
+                        }}>
+                        All Order Cases
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View style={{ marginTop: 15, marginLeft:5}}>
-              <LocLogo/>
-              </View>
-            </View>
-          </TouchableOpacity>
+              {/* <FlatList data={industry?.periodics} renderItem={yearItem} /> */}
+            </SafeAreaView>
+          </Animatable.View>
         </View>
-        <View style={styles.card3}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('DataNotLoc')}
-           >
-            <View style={{flexDirection: 'row'}}>
-              <View style={{marginLeft: 10}}>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: 25,
-                    marginTop: 10,
-                  }}>
-                  {industry?.global_address_not_available}
-                </Text>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: 15,
-                    marginTop: 10,
-                  }}>
-                  Location Data{'\n'}Not Provided
-                </Text>
-              </View>
-              <View style={{marginRight: 0, marginTop: 15,}}>
-              <NoLocLogo/>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-          <FlatList data={industry?.periodics} renderItem={yearItem} />
-        </SafeAreaView>
-      </Animatable.View>
-    </View>
-    </ScrollView>
-  </SafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -346,26 +326,30 @@ const styles = StyleSheet.create({
   },
   card1: {
     height: 115,
-    width: '100%',
+    width: '47%',
     borderRadius: 10,
     backgroundColor: theme.colors.bgColor,
     elevation: 12,
+    marginRight: 10,
+    alignItems: 'center'
   },
   card2: {
     height: 115,
     width: '47%',
     borderRadius: 10,
-    backgroundColor: "#8477FF",
+    backgroundColor: theme.colors.bgColor,
     elevation: 12,
     marginRight: 10,
+    alignItems: 'center'
   },
   card3: {
     height: 115,
     width: '47%',
     borderRadius: 10,
-    backgroundColor: '#1BB3CD',
+    backgroundColor: theme.colors.bgColor,
     elevation: 12,
     marginLeft: 10,
+    alignItems: 'center'
   },
   card4: {
     height: 115,
@@ -394,7 +378,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 130,
-    marginTop:50,
+    marginTop: 50,
     color: '#fff',
   },
   fab: {
@@ -402,7 +386,7 @@ const styles = StyleSheet.create({
     margin: 20,
     right: 0,
     bottom: 0,
-    color:'#257A52'
+    color: '#257A52'
   },
   footer: {
     flex: 3,
