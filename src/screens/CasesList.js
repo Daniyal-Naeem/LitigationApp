@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  Image
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const COLORS = { primary: '#1f145c', white: '#fff' };
@@ -15,10 +16,7 @@ import axios from 'axios';
 import { AuthContext } from '../../navigation/AuthProvider';
 import { Searchbar } from 'react-native-paper';
 import { theme } from '../core/theme';
-import ListIcon from '../assets/svgs/listicon';
 import GreenView from '../assets/svgs/greenView';
-import RedView from '../assets/svgs/redview';
-import RedListImg from '../assets/svgs/svgviewer';
 
 const CasesList = ({ navigation }) => {
 
@@ -29,7 +27,7 @@ const CasesList = ({ navigation }) => {
   const { userInfo } = React.useContext(AuthContext);
   const [current_page, setCurrent_page] = useState(1);
 
-  React.useEffect(() => getData(), []);
+  useEffect(() => getData(), []);
 
   const getData = () => {
     AsyncStorage.getItem('list').then(list => {
@@ -40,7 +38,7 @@ const CasesList = ({ navigation }) => {
     }).catch()
     setLoading(true);
     axios
-      .get(`${BASE_URL}/industrial-units/industries?page=` + current_page, {
+      .get(`${BASE_URL}/litigation/cases?page=` + current_page, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${userInfo.data.token.token}`,
@@ -48,6 +46,7 @@ const CasesList = ({ navigation }) => {
       })
       .then(res => {
         let list = res.data.data.data;
+        console.log('cases', list)
         setIndustriesList(list);
         setFilterdata(list)
         setCurrent_page(current_page + 1);
@@ -63,7 +62,7 @@ const CasesList = ({ navigation }) => {
 
   const searchFilter = (text) => {
     const newData = filterdata.filter(item => {
-      const itemData = item.title ? item.title.toUpperCase() : ''.toLowerCase();
+      const itemData = item.case_name ? item.case_name.toUpperCase() : ''.toLowerCase();
       const textData = text.toUpperCase();
       return itemData.indexOf(textData) > -1
     });
@@ -79,14 +78,17 @@ const CasesList = ({ navigation }) => {
       <TouchableOpacity
         style={{ padding: 5 }}
         onPress={() =>
-          navigation.navigate('Industry Description', { id: item.id, periodicid: item.periodics?.id, periodics: item.periodics_available })
+          navigation.navigate('Cases Desc', { id: item.case_number })
         }>
-        {item.periodics_available === null && (
+        {/* {item.periodics_available === null && ( */}
 
           <View style={styles.listItem}>
             <View style={{ flexDirection: 'row' }}>
               <View>
-                <ListIcon />
+                <Image
+                  style={styles.image}
+                  source={require('../assets/listLogo.png')}
+                />
               </View>
               <View style={{ margin: 8, flex: 1, marginLeft: 10 }}>
                 <Text
@@ -96,7 +98,7 @@ const CasesList = ({ navigation }) => {
                     color: '#263238',
                     marginBottom: 10,
                   }}>
-                  Industry: {item.title}  {'\n'}Code: {item.code}  {'\n'}Established Year: {item.year_established}
+                  Case Title: {item.case_name}  {'\n'}Case No: {item.case_number}  {'\n'}Hearing: {item.hearing_date}
                 </Text>
                 <View style={{ marginLeft: 180 }}>
                   <GreenView />
@@ -105,30 +107,8 @@ const CasesList = ({ navigation }) => {
             </View>
           </View>
 
-        )}
-        {item.periodics_available === 1 && (
-          <View style={styles.listItem}>
-            <View style={{ flexDirection: 'row' }}>
-              <View>
-                <RedListImg />
-              </View>
-              <View style={{ margin: 8, flex: 1, marginLeft: 10 }}>
-                <Text
-                  style={{
-                    fontWeight: 'bold',
-                    fontSize: 14,
-                    color: '#263238',
-                    marginBottom: 10,
-                  }}>
-                  Industry: {item.title}  {'\n'}Code: {item.code}  {'\n'}Established Year: {item.year_established}
-                </Text>
-                <View style={{ marginLeft: 180 }}>
-                  <RedView />
-                </View>
-              </View>
-            </View>
-          </View>
-        )}
+        {/* )} */}
+       
       </TouchableOpacity>
     );
   };
@@ -155,9 +135,7 @@ const CasesList = ({ navigation }) => {
     <SafeAreaView
       style={{
         flex: 1,
-
       }}>
-
       <View>
         <View style={{ alignItems: 'center', backgroundColor: theme.colors.bgColor, }}>
           <Text style={{ fontSize: 20, padding: 5, color: '#fff', fontWeight: 'bold', marginTop: 15 }}>Cases List</Text>
@@ -187,16 +165,14 @@ const CasesList = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
-
   listItem: {
     padding: 5,
     backgroundColor: '#FFFFFF',
     borderColor: '#DAD6D6',
     elevation: 2,
     borderRadius: 5,
-    minHeight: 30
+    minHeight: 25
   },
   actionIcon: {
     height: 25,
@@ -241,12 +217,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   Searchbar: {
-    width: "80%", 
-    borderRadius: 5, 
-    borderColor: theme.colors.bgColor, 
-    borderWidth: 1, 
-    marginBottom: 10
-  }
+    width: "90%",
+    borderRadius: 8,
+    borderColor: theme.colors.bgColor,
+    borderWidth: 1,
+    marginBottom: 10,
+
+  },
+  image: {
+    marginTop: 12,
+    marginLeft: 10,
+    width: 50,
+    height: 60,
+  },
 });
 
 export default CasesList;
