@@ -1,45 +1,40 @@
-import * as React from "react";
-import Svg, { G, Rect, Text, TSpan } from "react-native-svg";
-const GreenView = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={60.459}
-    height={23.268}
-    viewBox="0 0 60.459 23.268"
-    {...props}
-  >
-    <G
-      id="Group_16930"
-      data-name="Group 16930"
-      transform="translate(-306.599 -302.61)"
+import * as React from "react"
+import Svg, { G, Text, TSpan, Path } from "react-native-svg"
+
+function GreenView(props) {
+  return (
+    <Svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={61.936}
+      height={15.699}
+      viewBox="0 0 61.936 15.699"
+      {...props}
     >
-      <Rect
-        id="Rectangle_17332"
-        data-name="Rectangle 17332"
-        width={60.459}
-        height={23.268}
-        rx={2}
-        transform="translate(306.599 302.61)"
-        fill="#06ab8d"
-      />
-      <G
-        id="Group_16864"
-        data-name="Group 16864"
-        transform="translate(318.9 302.61)"
-      >
+      <G data-name="Group 17012">
         <Text
-          id="View"
-          transform="translate(0.1 17.39)"
-          fill="#fff"
-          fontSize={16}
-          fontFamily="SegoeUI, Segoe UI"
+          data-name="More info"
+          transform="translate(-9 -1.714) translate(9 13.063)"
+          fill="#292929"
+          fontSize={12}
+          fontFamily="Poppins-Regular, Poppins"
         >
           <TSpan x={0} y={0}>
-            {"View"}
+            {"More info"}
           </TSpan>
         </Text>
+        <Path
+          data-name="Path 10015"
+          d="M63.501 15.998l6.435-6.435-6.435-6.435"
+          fill="none"
+          stroke="#292929"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          transform="translate(-9 -1.714)"
+        />
       </G>
-    </G>
-  </Svg>
-);
-export default GreenView;
+    </Svg>
+  )
+}
+
+export default GreenView
