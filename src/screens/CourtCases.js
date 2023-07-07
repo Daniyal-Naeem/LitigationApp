@@ -199,7 +199,7 @@ const CourtCases = ({ navigation }) => {
                 </View>
                 <View style={styles.card3}>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('DataNotLoc')}
+                    // onPress={() => navigation.navigate('DataNotLoc')}
                   >
                     <View style={{ alignItems: 'center' }}>
                       <Text
@@ -276,7 +276,7 @@ const CourtCases = ({ navigation }) => {
                 </View>
                 <View style={styles.card3}>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('DataNotLoc')}
+                    // onPress={() => navigation.navigate('DataNotLoc')}
                   >
                     <View style={{ alignItems: 'center' }}>
                       <Text
@@ -395,21 +395,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 30,
   },
-  wrapText: {
-    flex: 1,
-    marginLeft: 10,
-    justifyContent: 'center',
-  },
-  item: {
-    backgroundColor: '#96e3b0',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 20,
-  },
-  title: {
-    fontSize: 52,
-  },
+ 
 });
 
 export default CourtCases;
